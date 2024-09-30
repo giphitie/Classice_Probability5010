@@ -1,0 +1,41 @@
+---
+title: "HW1"
+author: "Gifty Osei"
+date: "2024-09-04"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+
+# Define the binomial probability function
+binomial_pmf <- function(n, k, p) {
+  return(choose(n, k) * p^k * (1-p)^(n-k))
+}
+
+# Number of steps
+n <- 5
+
+# Probability of moving up for the first and second planes
+p1 <- 0.5   # First plane
+p2 <- 2/3   # Second plane
+
+# Calculate the probability that the second plane is ahead of the first plane
+probability <- 0
+for (j in 1:n) {  # Y2 values
+  for (i in 0:(j-1)) {  # Y1 values less than Y2
+    probability <- probability + binomial_pmf(n, i, p1) * binomial_pmf(n, j, p2)
+  }
+}
+
+# Print the result
+print(probability)
+
+
+```
+

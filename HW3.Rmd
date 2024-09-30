@@ -1,0 +1,123 @@
+---
+title: "Homework3"
+author: "Gifty Osei"
+date: "2024-09-30"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 3c
+
+```{r}
+# Parameters
+n <- 1000
+
+# Case 1: Small p
+p1 <- 0.001
+lambda1 <- n * p1  # lambda = 1
+k1 <- floor(lambda1 + 0.5 * sqrt(lambda1))  # k = 1
+
+# Case 2: Larger p
+p2 <- 0.01
+lambda2 <- n * p2  # lambda = 10
+k2 <- floor(lambda2 + 0.5 * sqrt(lambda2))  # k = 11
+
+
+
+# Binomial CDFs
+cdf_binom_case1 <- pbinom(k1, size = n, prob = p1)
+cdf_binom_case2 <- pbinom(k2, size = n, prob = p2)
+
+# Poisson CDFs
+cdf_poisson_case1 <- ppois(k1, lambda = lambda1)
+cdf_poisson_case2 <- ppois(k2, lambda = lambda2)
+
+
+
+```
+
+\begin{center} For Case 1:Small $p (p = 0.001, \lambda = 1)$, Binomial CDF at $ k=1$ is `r cdf_binom_case1 ` and Poisson CDF at $k=1$ is `r cdf_poisson_case1`.
+
+For Case 2: Larger $p (p = 0.01, \lambda = 10)$, Binomial CDF at $k=2$ is `r cdf_binom_case2 ` and Poisson CDF at $k=2$ is `r cdf_poisson_case2`.
+
+\end{center}
+
+
+```{r, eval=FALSE, echo=FALSE, message=FALSE, warning=FALSE,include=FALSE}
+# Define range for k
+k_values_case1 <- 0:5
+k_values_case2 <- 0:20
+
+# Calculate CDFs for range of k
+cdf_binom_range_case1 <- pbinom(k_values_case1, size = n, prob = p1)
+cdf_poisson_range_case1 <- ppois(k_values_case1, lambda = lambda1)
+
+cdf_binom_range_case2 <- pbinom(k_values_case2, size = n, prob = p2)
+cdf_poisson_range_case2 <- ppois(k_values_case2, lambda = lambda2)
+
+# Plot for Case 1
+plot(k_values_case1, cdf_binom_range_case1, type = "b", pch = 19, col = "blue",
+     ylim = c(0,1), xlab = "k", ylab = "CDF",
+     main = "CDF Comparison: Binomial vs Poisson (p=0.001, lambda=1)")
+lines(k_values_case1, cdf_poisson_range_case1, type = "b", pch = 17, col = "red")
+legend("bottomright", legend = c("Binomial CDF", "Poisson CDF"),
+       col = c("blue", "red"), pch = c(19,17), lty = 1)
+
+# Plot for Case 2
+plot(k_values_case2, cdf_binom_range_case2, type = "b", pch = 19, col = "blue",
+     ylim = c(0,1), xlab = "k", ylab = "CDF",
+     main = "CDF Comparison: Binomial vs Poisson (p=0.01, lambda=10)")
+lines(k_values_case2, cdf_poisson_range_case2, type = "b", pch = 17, col = "red")
+legend("bottomright", legend = c("Binomial CDF", "Poisson CDF"),
+       col = c("blue", "red"), pch = c(19,17), lty = 1)
+
+```
+
+
+## Plot to show Difference
+
+
+```{r plot, warning=FALSE, message=FALSE}
+
+library(ggplot2)
+
+# Set parameters for Binomial and Poisson distributions
+n <- 1000
+lambda_values <- c(5, 50)  # Small and large values of lambda
+k_values <- c(floor(5 + 0.5 * sqrt(5)), floor(50 + 0.5 * sqrt(50)))  # Values for k
+
+# Create a data frame to store CDF values
+results <- data.frame(k = integer(), CDF = numeric(), Distribution = character(), Lambda = numeric())
+
+# Calculate CDF for Binomial and Poisson distributions
+for (lambda in lambda_values) {
+  p <- lambda / n  # Probability of success for Binomial
+  k_range <- 0:50  # Range of k values to calculate CDF
+
+  # Calculate Binomial CDF
+  binom_cdf <- pbinom(k_range, n, p)
+  results <- rbind(results, data.frame(k = k_range, CDF = binom_cdf, Distribution = "Binomial", Lambda = lambda))
+  
+  # Calculate Poisson CDF
+  poisson_cdf <- ppois(k_range, lambda)
+  results <- rbind(results, data.frame(k = k_range, CDF = poisson_cdf, Distribution = "Poisson", Lambda = lambda))
+}
+
+# Plotting the CDF comparison
+ggplot(results, aes(x = k, y = CDF, color = Distribution)) +
+  geom_line() +
+  geom_point() +
+  facet_wrap(~ Lambda, scales = "free_y", ncol = 2, labeller = labeller(Lambda = function(x) paste("λ =", x))) +
+  labs(title = "CDF Comparison of Binomial and Poisson Approximations",
+       x = "k", y = "CDF") +
+  theme_bw() +
+  theme(legend.position = "top")
+
+```
+
+The Poisson approximation to the Binomial distribution is more accurate when 
+$\lambda$ (or $p$) is small, as illustrated in the left plot. When $\lambda$ is large, the Poisson approximation is still useful, but its accuracy diminishes as $p$ increases or $\lambda$ increases.
+Therefore, The distribution $Y_n$ converges to the distribution of $Y \sim $ Poisson($\lambda$).
