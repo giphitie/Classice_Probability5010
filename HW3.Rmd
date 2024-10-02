@@ -9,7 +9,7 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Question 3c
+## Problem 3c
 
 ```{r}
 # Parameters
@@ -90,7 +90,10 @@ lambda_values <- c(5, 50)  # Small and large values of lambda
 k_values <- c(floor(5 + 0.5 * sqrt(5)), floor(50 + 0.5 * sqrt(50)))  # Values for k
 
 # Create a data frame to store CDF values
-results <- data.frame(k = integer(), CDF = numeric(), Distribution = character(), Lambda = numeric())
+results <- data.frame(k = integer(),
+                      CDF = numeric(),
+                      Distribution = character(),
+                      Lambda = numeric())
 
 # Calculate CDF for Binomial and Poisson distributions
 for (lambda in lambda_values) {
@@ -99,18 +102,28 @@ for (lambda in lambda_values) {
 
   # Calculate Binomial CDF
   binom_cdf <- pbinom(k_range, n, p)
-  results <- rbind(results, data.frame(k = k_range, CDF = binom_cdf, Distribution = "Binomial", Lambda = lambda))
+  results <- rbind(results,
+                   data.frame(k = k_range,
+                              CDF = binom_cdf,
+                              Distribution = "Binomial",
+                              Lambda = lambda))
   
   # Calculate Poisson CDF
   poisson_cdf <- ppois(k_range, lambda)
-  results <- rbind(results, data.frame(k = k_range, CDF = poisson_cdf, Distribution = "Poisson", Lambda = lambda))
+  results <- rbind(results,
+                   data.frame(k = k_range,
+                              CDF = poisson_cdf,
+                              Distribution = "Poisson",
+                              Lambda = lambda))
 }
 
 # Plotting the CDF comparison
 ggplot(results, aes(x = k, y = CDF, color = Distribution)) +
   geom_line() +
   geom_point() +
-  facet_wrap(~ Lambda, scales = "free_y", ncol = 2, labeller = labeller(Lambda = function(x) paste("λ =", x))) +
+  facet_wrap(~ Lambda, scales = "free_y",
+             ncol = 2, labeller = 
+               labeller(Lambda = function(x) paste(expression(lambda), x))) +
   labs(title = "CDF Comparison of Binomial and Poisson Approximations",
        x = "k", y = "CDF") +
   theme_bw() +
@@ -120,4 +133,4 @@ ggplot(results, aes(x = k, y = CDF, color = Distribution)) +
 
 The Poisson approximation to the Binomial distribution is more accurate when 
 $\lambda$ (or $p$) is small, as illustrated in the left plot. When $\lambda$ is large, the Poisson approximation is still useful, but its accuracy diminishes as $p$ increases or $\lambda$ increases.
-Therefore, The distribution $Y_n$ converges to the distribution of $Y \sim $ Poisson($\lambda$).
+Therefore, The distribution $Y_n$ converges to the distribution of $Y\sim  Poisson(\lambda)$.
